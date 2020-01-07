@@ -1,0 +1,27 @@
+name: 'Build Unitystation'
+description: 'Build Unitystation unity project'
+author: Jonas Meeuws <jonas.meeuws@gmail.com>
+
+inputs:
+  project-path:
+    description: 'Path of the project, either absolute or relative to $GITHUB_WORKSPACE (default working directory)'
+    required: true
+    default: 'UnityProject'
+  build-target:
+    description: 'Build target. Options are: server, windows, osx, linux'
+    required: true
+  unity-license:
+    description: 'Content of the Unity licence ulf file'
+    required: true
+
+outputs:
+  build-path:
+    description: 'Path of the directory containing the finished build'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.project-path }}
+    - ${{ inputs.build-target }}
+    - ${{ inputs.unity-license }}

@@ -4,25 +4,27 @@ on:
   pull_request: {}
   push: { branches: [develop] }
 
-env:
-  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-  PROJECT_PATH: UnityProject
-  BUILD_NAME: Unitystation
-
 jobs:
   buildForLinux:
-    name: Build for ${{ matrix.targetPlatform }} on version ${{ matrix.unityVersion }}
+    name: Build for linux platform
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
     steps:
-      - uses: actions/checkout@v1
-      - uses: webbertakken/unity-activate@v1
-      - uses: reavershark/unity-build@v0.2
-        id: buildStep
+      - name: Checkout repository
+        uses: actions/checkout@v1
+      - name: Activate the license
+        uses: webbertakken/unity-activate@v1
         env:
-          BUILD_TARGET: StandaloneLinux64
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      - name: Build
+        id: build
+        uses: ./Actions/
+        with:
+          project-path: UnityProject
+          build-target: server
+          unity-license: ${{ secrets.UNITY_LICENSE }}
       - uses: actions/upload-artifact@v1
         with:
           name: LinuxBuild
-          path: ${{ steps.buildStep.outputs.buildPath }}
+          path: ${{ steps.build.outputs.build-path }}
